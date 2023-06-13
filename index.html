@@ -160,8 +160,18 @@ function get_real_path(str1){
 
 function show(){
 var card_name = document.getElementById("card").value;
+	
+var selectElement = document.getElementById("mySelect");
+var selectedValue = selectElement.value;
 
-var res = "character/"+card_name+"/image/main.png";
+var res;
+if(selectedValue=="1"){
+	res = "character/"+card_name+"/image/main.png";
+}else if(selectedValue=="3"){
+	res = "character/"+card_name+"/image/stand.png";
+}else if(selectedValue=="2"){
+	alert("功能未实装")
+}
 
 var res_obj = GenerateMd5(res);
 
@@ -180,6 +190,11 @@ document.write(img);
     </head>
     <body>
         <input type="text" value="100104" id="card">
-		<button type="button" onclick="show()">Get_Waifu</button>
+	<select id="mySelect">
+    		<option value="1">卡面</option>
+   		<option value="2">memoria</option>
+    		<option value="3">立绘</option>
+  	</select>
+	<button type="button" onclick="show()">Get_Waifu</button>
     </body>
 </html>
