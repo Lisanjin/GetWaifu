@@ -170,7 +170,7 @@ if(selectedValue=="1"){
 }else if(selectedValue=="3"){
 	res = "character/"+card_name+"/image/stand.png";
 }else if(selectedValue=="2"){
-	alert("功能未实装")
+	res ="character/"+card_name.substring(0,4)+"/image/"+card_name+".png";
 }
 
 var res_obj = GenerateMd5(res);
@@ -196,5 +196,6 @@ document.write(img);
     		<option value="3">立绘</option>
   	</select>
 	<button type="button" onclick="show()">Get_Waifu</button>
+	    <a href="https://github.com/Lisanjin/GetWaifu" target="_blank">使用说明</a>
     </body>
 </html>
