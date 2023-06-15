@@ -2,7 +2,8 @@
 
 ## 如果你不喜欢フラウ那么请你关闭页面
 
-## 用法：
+## 用法：  
+点击[github pages页面地址](https://lisanjin.github.io/GetWaifu/)  
 输入编号，选择种类，点击getwaifu按钮
 
 ## 编号说明：  
