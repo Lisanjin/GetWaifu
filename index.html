@@ -171,6 +171,8 @@ if(selectedValue=="1"){
 	res = "character/"+card_name+"/image/stand.png";
 }else if(selectedValue=="2"){
 	res ="character/"+card_name.substring(0,4)+"/image/"+card_name+".png";
+}else if(selectedValue=="4"){
+	res ="gallery/episode/"+card_name+".png";
 }
 
 var res_obj = GenerateMd5(res);
@@ -195,6 +197,7 @@ document.write(img);
     		<option value="1">卡面</option>
    		<option value="2">memoria</option>
     		<option value="3">立绘</option>
+		<option value="4">寝室预览</option>
   	</select>
 	<button type="button" onclick="show()">Get_Waifu</button>
 	    <a href="https://github.com/Lisanjin/GetWaifu" target="_blank">使用说明</a>
