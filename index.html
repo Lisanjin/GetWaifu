@@ -175,6 +175,8 @@ if(selectedValue=="1"){
 	res ="gallery/episode/"+card_name+".png";
 }else if(selectedValue=="5"){
 	res ="banner/image/bnr_Event"+card_name+".png";
+}else if(selectedValue=="6"){
+	res =card_name;
 }
 
 var res_obj = GenerateMd5(res);
@@ -195,12 +197,13 @@ document.write(img);
     <body>
 	    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <input type="text" value="100104" id="card">
-	<select id="mySelect">
+	<select id="mySelect"  value="6">
     		<option value="1">卡面</option>
    		<option value="2">memoria</option>
     		<option value="3">立绘</option>
 		<option value="4">寝室预览</option>
 		<option value="5">banner_Event</option>
+		<option value="6">资源路径</option>
   	</select>
 	<button type="button" onclick="show()">Get_Waifu</button>
 	    <a href="https://github.com/Lisanjin/GetWaifu" target="_blank">使用说明</a>
