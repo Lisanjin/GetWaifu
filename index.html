@@ -1,7 +1,10 @@
 <html>
     <head>
 	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHBECZ6MCG"></script>
+	<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHBECZ6MCG"></script> -->
+    <script src="lib/minashigo/crypto-js.js"></script>
+    <script src="lib/minashigo/decrypt_masterdata.js"></script>
+    <script src="lib/minashigo/AssetCommonUtils.js"></script>
 	<script>
 	  window.dataLayer = window.dataLayer || [];
 	  function gtag(){dataLayer.push(arguments);}
@@ -164,42 +167,130 @@ function get_real_path(str1){
         return  e + i + a + n;
 }
 
+// 孤儿部分
+let minashigo_manifest = null; 
+let minashigo_version = null;
+async function getVersion(url) {
+  url =  "https://minasigo-no-shigoto-web-r-server.orphans-order.com/mnsg/user/getVersion"
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    // 处理JSON数据
+    return data.version.resourceVersion
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
 
+async function getManifest(resourceVersion) {
+  url = 'https://sanjin-fanza-rank.replit.app/minashigo_manifest/'+resourceVersion;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    let  data = await response.text();
+    data = data.slice(1, -1)
+    minashigo_manifest = _decrypt(data);
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    getVersion().then(data => {
+        minashigo_version= data
+        getManifest(data)
+    })
+    .catch(error => {
+      console.error('Error occurred while fetching data:', error);
+    });;
+});
 
 
 function show(){
-var card_name = document.getElementById("card").value;
+    var gameSelect = document.getElementById("gameSelect").value;
+    if(gameSelect == "1"){
+        show_deepone();
+    }else if(gameSelect == "2"){
+        show_minashigo();
+    }
+
+}
+
+function show_minashigo(){
+    RESOURCE_HOSTURL = 'https://minasigo-no-shigoto-pd-c-res.orphans-order.com/'+minashigo_version+'/'
+    var card_name = document.getElementById("card").value;
 	
-var selectElement = document.getElementById("mySelect");
-var selectedValue = selectElement.value;
+    var selectElement = document.getElementById("typeSelect");
+    var selectedValue = selectElement.value;
 
-var res;
-if(selectedValue=="1"){
-	res = "character/"+card_name+"/image/main.png";
-}else if(selectedValue=="3"){
-	res = "character/"+card_name+"/image/stand.png";
-}else if(selectedValue=="2"){
-	res ="character/"+card_name.substring(0,4)+"/image/"+card_name+".png";
-}else if(selectedValue=="4"){
-	res ="gallery/episode/"+card_name+".png";
-}else if(selectedValue=="5"){
-	res ="banner/image/bnr_Event"+card_name+".png";
-}else if(selectedValue=="6"){
-	res =card_name;
+    var res;
+    if(selectedValue=="1"){
+        // image/character/stand/10010101.png
+        res = "image/character/stand/"+card_name+".png";
+        quality = "3"
+    }else if(selectedValue=="2"){
+        // image/summon/stand/30010101.png
+        res = "image/summon/stand/"+card_name+".png";
+        quality = "3"
+    }else if(selectedValue=="3"){
+        // image/episode/story/2010010111.png
+        res = "image/episode/story/"+card_name+".png";
+        quality = "3"
+    }else if(selectedValue=="4"){
+        res = card_name;
+        quality = "3"
+    }
+
+    var res_MD5 = minashigo_manifest.assets[res][quality].md5
+    const assetData = {
+    "path": res,
+    "quality": parseInt(quality),
+    "md5": res_MD5
+    }
+    const assetPath = convertMD5Path(assetData);
+    var res_link = RESOURCE_HOSTURL+assetPath;
+    var img = "<img src='"+ res_link +"' > <p>如果你老婆长这样那她就不是你老婆，这是我老婆</p>"
+
+    document.querySelector("#showimg").innerHTML = img;
+
 }
 
-var res_obj = GenerateMd5(res);
+function show_deepone(){
+    var card_name = document.getElementById("card").value;
+	
+    var selectElement = document.getElementById("typeSelect");
+    var selectedValue = selectElement.value;
 
-var res_MD5 = res_obj.getMD5();
+    var res;
+    if(selectedValue=="1"){
+        res = "character/"+card_name+"/image/main.png";
+    }else if(selectedValue=="3"){
+        res = "character/"+card_name+"/image/stand.png";
+    }else if(selectedValue=="2"){
+        res ="character/"+card_name.substring(0,4)+"/image/"+card_name+".png";
+    }else if(selectedValue=="4"){
+        res ="gallery/episode/"+card_name+".png";
+    }else if(selectedValue=="5"){
+        res ="banner/image/bnr_Event"+card_name+".png";
+    }else if(selectedValue=="6"){
+        res =card_name;
+    }
 
-var res_path=get_real_path(res_MD5);
-var res_link = "https://tonofura-r-cdn-resource.deepone-online.com/deep_one/download_game_hd/"+res_path+res_MD5+".png";
-var img = "<img src='"+ res_link +"' > <p>如果你老婆长这样那她就不是你老婆，这是我老婆</p>"
+    var res_obj = GenerateMd5(res);
 
-document.querySelector("#showimg").innerHTML = img;
+    var res_MD5 = res_obj.getMD5();
 
+    var res_path=get_real_path(res_MD5);
+    var res_link = "https://tonofura-r-cdn-resource.deepone-online.com/deep_one/download_game_hd/"+res_path+res_MD5+".png";
+    var img = "<img src='"+ res_link +"' > <p>如果你老婆长这样那她就不是你老婆，这是我老婆</p>"
+
+    document.querySelector("#showimg").innerHTML = img;
 }
-
 
 		</script>
     </head>
@@ -207,18 +298,55 @@ document.querySelector("#showimg").innerHTML = img;
 	    <div id="showimg"></div>
 	    <div style="position: absolute;  bottom: 0 ;left: 50%; transform: translate(-50%, -50%);">
         <input class="deep ipt" type="text" value="100104" id="card">
-	<select class="deep" id="mySelect"  value="6">
-    		<option value="1">卡面</option>
+	<select class="deep" id="typeSelect"  value="1">
+    	<option value="1">卡面</option>
    		<option value="2">memoria</option>
-    		<option value="3">立绘</option>
+    	<option value="3">立绘</option>
 		<option value="4">寝室预览</option>
 		<option value="5">banner_Event</option>
 		<option value="6">资源路径</option>
   	</select>
+      <select class="deep" id="gameSelect"  value="1">
+        <option value="1">DeepOne</option>
+       <option value="2">Minashigo</option>
+  </select>
 	<button class="btn" type="button" onclick="show()">Get_Waifu</button>
 	    <a href="https://github.com/Lisanjin/GetWaifu" target="_blank">使用说明</a>
 		    </div>
     </body>
+<script>
+        
+var typeSelect = document.getElementById("typeSelect");
+var gameSelect = document.getElementById("gameSelect");
+
+// 定义函数来更新typeSelect的选项
+function updateTypeOptions() {
+    // 清空typeSelect的所有选项
+    typeSelect.innerHTML = '';
+
+    // 根据gameSelect的值，动态添加对应的选项到typeSelect
+    if (gameSelect.value === "1") {
+        typeSelect.innerHTML += '<option value="1">卡面</option>';
+        typeSelect.innerHTML += '<option value="2">memoria</option>';
+        typeSelect.innerHTML += '<option value="3">立绘</option>';
+        typeSelect.innerHTML += '<option value="4">寝室预览</option>';
+        typeSelect.innerHTML += '<option value="5">banner_Event</option>';
+        typeSelect.innerHTML += '<option value="6">资源路径</option>';
+    } else if (gameSelect.value === "2") {
+        // image/character/stand/10010101.png
+        typeSelect.innerHTML += '<option value="1">角色卡面</option>';
+        typeSelect.innerHTML += '<option value="2">战神卡面</option>';
+        typeSelect.innerHTML += '<option value="3">寝室预览</option>';
+        typeSelect.innerHTML += '<option value="4">资源路径</option>';
+    }
+    // 添加更多游戏的选项可以继续在这里扩展
+}
+// 添加事件监听器，当gameSelect的值发生变化时，调用updateTypeOptions函数更新typeSelect的选项
+gameSelect.addEventListener("change", updateTypeOptions);
+
+// 页面加载时调用一次updateTypeOptions函数，确保typeSelect的选项与初始gameSelect的值一致
+updateTypeOptions();
+</script>
 	<style type="text/css">
 		#showimg{
 			text-align: center;
