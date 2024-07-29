@@ -14,7 +14,25 @@
 	</script>
         <title>GET Waifu</title>
 		<script type="text/javascript">
-	
+// 放课后 部分
+let houkago_cardInfo = null;
+document.addEventListener('DOMContentLoaded', () => {
+            fetch('lib/houkago/card_info.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    houkago_cardInfo = data;
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        });
+
+// deepone 部分
 			function GenerateMd5(t) {
     var obj = new Object();
     obj.key = t;
@@ -138,10 +156,6 @@
 }
 
 
-
-//var card_name = "";
-
-
 function get_real_path(str1){
         e='';
         i='';
@@ -170,6 +184,7 @@ function get_real_path(str1){
 // 孤儿部分
 let minashigo_manifest = null; 
 let minashigo_version = null;
+
 async function getVersion(url) {
   url =  "https://minasigo-no-shigoto-web-r-server.orphans-order.com/mnsg/user/getVersion"
   try {
@@ -211,12 +226,15 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+// -------------------------------------------------------
 function show(){
     var gameSelect = document.getElementById("gameSelect").value;
     if(gameSelect == "1"){
         show_deepone();
     }else if(gameSelect == "2"){
         show_minashigo();
+    }else if(gameSelect == "3"){
+        show_houkagor();
     }
 
 }
@@ -262,7 +280,6 @@ function show_minashigo(){
 
 function show_deepone(){
     var card_name = document.getElementById("card").value;
-	
     var selectElement = document.getElementById("typeSelect");
     var selectedValue = selectElement.value;
 
@@ -292,6 +309,22 @@ function show_deepone(){
     document.querySelector("#showimg").innerHTML = img;
 }
 
+function show_houkagor(){
+    var card_name = document.getElementById("card").value;
+    var selectElement = document.getElementById("typeSelect");
+    var selectedValue = selectElement.value;
+
+    if(selectedValue=="1"){
+
+        var mst_card_hash = houkago_cardInfo.find(card => card.mst_card_id === card_name).mst_card_hash
+        res_link = "https://resource-asw.bokusen.net/resource/img/mypage/r/"+mst_card_hash+".png?1";
+
+        var img = "<img src='"+ res_link +"' > <p>如果你老婆长这样那她就不是你老婆，这是我老婆</p>"
+
+        document.querySelector("#showimg").innerHTML = img;
+    }
+}
+
 		</script>
     </head>
     <body>
@@ -308,7 +341,8 @@ function show_deepone(){
   	</select>
       <select class="deep" id="gameSelect"  value="1">
         <option value="1">DeepOne</option>
-       <option value="2">Minashigo</option>
+       <option value="2">ミナシゴノシゴト</option>
+       <option value="3">ぼくらの放課後戦争！</option>
   </select>
 	<button class="btn" type="button" onclick="show()">Get_Waifu</button>
 	    <a href="https://github.com/Lisanjin/GetWaifu" target="_blank">使用说明</a>
@@ -319,14 +353,12 @@ function show_deepone(){
 var typeSelect = document.getElementById("typeSelect");
 var gameSelect = document.getElementById("gameSelect");
 
-// 定义函数来更新typeSelect的选项
 function updateTypeOptions() {
-    // 清空typeSelect的所有选项
+
     typeSelect.innerHTML = '';
 
-    // 根据gameSelect的值，动态添加对应的选项到typeSelect
     if (gameSelect.value === "1") {
-        typeSelect.innerHTML += '<option value="1">卡面</option>';
+        typeSelect.innerHTML += '<option value="1">角色卡面</option>';
         typeSelect.innerHTML += '<option value="2">memoria</option>';
         typeSelect.innerHTML += '<option value="3">立绘</option>';
         typeSelect.innerHTML += '<option value="4">寝室预览</option>';
@@ -338,13 +370,13 @@ function updateTypeOptions() {
         typeSelect.innerHTML += '<option value="2">战神卡面</option>';
         typeSelect.innerHTML += '<option value="3">寝室预览</option>';
         typeSelect.innerHTML += '<option value="4">资源路径</option>';
+    }else if (gameSelect.value === "3") {
+        typeSelect.innerHTML += '<option value="1">角色卡面</option>';
     }
-    // 添加更多游戏的选项可以继续在这里扩展
 }
-// 添加事件监听器，当gameSelect的值发生变化时，调用updateTypeOptions函数更新typeSelect的选项
+
 gameSelect.addEventListener("change", updateTypeOptions);
 
-// 页面加载时调用一次updateTypeOptions函数，确保typeSelect的选项与初始gameSelect的值一致
 updateTypeOptions();
 </script>
 	<style type="text/css">
