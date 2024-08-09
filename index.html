@@ -1,7 +1,7 @@
 <html>
     <head>
 	<!-- Google tag (gtag.js) -->
-	<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHBECZ6MCG"></script> -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHBECZ6MCG"></script>
     <script src="lib/minashigo/crypto-js.js"></script>
     <script src="lib/minashigo/decrypt_masterdata.js"></script>
     <script src="lib/minashigo/AssetCommonUtils.js"></script>
@@ -225,6 +225,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });;
 });
 
+// 百花传部分
+
+
 
 // -------------------------------------------------------
 function show(){
@@ -235,6 +238,8 @@ function show(){
         show_minashigo();
     }else if(gameSelect == "3"){
         show_houkagor();
+    }else if(gameSelect == "4"){
+        show_hyakkadenr();
     }
 
 }
@@ -307,7 +312,7 @@ function show_deepone(){
     var img = "<img src='"+ res_link +"' > <p>如果你老婆长这样那她就不是你老婆，这是我老婆</p>"
 
     document.querySelector("#showimg").innerHTML = img;
-}
+};
 
 function show_houkagor(){
     var card_name = document.getElementById("card").value;
@@ -323,7 +328,35 @@ function show_houkagor(){
 
         document.querySelector("#showimg").innerHTML = img;
     }
-}
+};
+
+function show_hyakkadenr(){
+    var card_name = document.getElementById("card").value;
+    var selectElement = document.getElementById("typeSelect");
+    var selectedValue = selectElement.value;
+    var url;
+    if(selectedValue=="1"){
+        // 1100200
+        var url = "https://cdn-production.nobunagasengoku.com/client/res/image/unit/character/st/c_st_11"+card_name+"00_00.png";
+    }else if(selectedValue=="2"){
+        // https://cdn-production.nobunagasengoku.com/client/res/image/unit/character/fc/c_fc_1100200.png
+        var url = "https://cdn-production.nobunagasengoku.com/client/res/image/unit/character/fc/c_fc_11"+card_name+"00.png";
+    }else if(selectedValue=="3"){
+        // https://cdn-production.nobunagasengoku.com/client/res/image/cg/cg_1100200_H01_01.jpg
+        var character_num = card_name.substring(0,3);
+        var hs_num = card_name.substring(3,5);
+        var cg_num = card_name.substring(5,7);
+        console.log(character_num,hs_num,cg_num);
+        var url = "https://cdn-production.nobunagasengoku.com/client/res/image/cg/cg_11"+character_num+"00_H"+hs_num+"_"+cg_num+".jpg";
+        console.log(url);
+
+    }
+    var img = "<img src='"+ url +"' > <p>如果你老婆长这样那她就不是你老婆，这是我老婆</p>";
+    document.querySelector("#showimg").innerHTML = img;
+
+    
+    
+};
 
 		</script>
     </head>
@@ -343,6 +376,7 @@ function show_houkagor(){
         <option value="1">DeepOne</option>
        <option value="2">ミナシゴノシゴト</option>
        <option value="3">ぼくらの放課後戦争！</option>
+       <option value="4">戦国百花伝</option>
   </select>
 	<button class="btn" type="button" onclick="show()">Get_Waifu</button>
 	    <a href="https://github.com/Lisanjin/GetWaifu" target="_blank">使用说明</a>
@@ -372,6 +406,10 @@ function updateTypeOptions() {
         typeSelect.innerHTML += '<option value="4">资源路径</option>';
     }else if (gameSelect.value === "3") {
         typeSelect.innerHTML += '<option value="1">角色卡面</option>';
+    }else if (gameSelect.value === "4") {
+        typeSelect.innerHTML += '<option value="1">角色卡面</option>';
+        typeSelect.innerHTML += '<option value="2">表情差分</option>';
+        typeSelect.innerHTML += '<option value="3">CG</option>';
     }
 }
 
